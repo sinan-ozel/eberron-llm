@@ -1,0 +1,51 @@
+services:
+  notebooks:
+    image: jupyterlab
+    build:
+      context: ./
+      dockerfile: jupyterlab/Dockerfile
+    ports:
+      - "127.0.0.1:8888:8888"
+    container_name: jupyterlab
+    networks:
+      - eberron-llm
+    environment:
+      - JUPYTERLAB_SETTINGS_DIR=/jupyterlab/config
+      - HF_HOME=/jupyterlab/hf
+      - MISTRAL_MODEL=/jupyterlab/mistral_models
+    volumes:
+      - './jupyterlab/notebooks:/jupyterlab/notebooks'
+      - 'D:/Home/Personal/RP/Resources/DND 3e/Eberron:/eberron/3e'
+      - 'D:/Home/Personal/RP/Resources/DND 5e/CampaignSetting/Eberron:/eberron/5e'
+      - './jupyterlab/config:/jupyterlab/config'
+      - 'F:/HuggingFaceCache:/jupyterlab/hf'
+      - 'F:/MistralModels:/jupyterlab/mistral_models'
+      - 'D:/AppData/EberronCorpus:/corpus'
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: ["gpu"]
+            count: all
+  aws-cli:
+    image: aws-cli
+    tty: true
+    build:
+      context: ./
+      dockerfile: aws-cli/Dockerfile
+    container_name: aws-cli
+    volumes:
+      - './.ecs:/root/.ecs'
+      - './.aws:/root/.aws'
+      - 'D:/AppData/EberronCorpus:/corpus'
+      - './aws-cli/kubernetes:/root/deployment/kubernetes'
+      - './images:/root/deployment/images'
+      - './jupyterlab:/root/jupyterlab'
+      - 'C:/Users/sinan/Config/vim:/root/.vim'
+    networks:
+      - eberron-llm
+    command: tail -F /dev/null
+networks:
+  eberron-llm:
+    driver: bridge
