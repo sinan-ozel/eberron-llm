@@ -7,16 +7,28 @@
         "label": "build",
         "type": "shell",
         "command": [
-          "docker build --tag sinan-ozel/jupyterlab/jupyterlab:latest --file ./jupyterlab/Dockerfile .;",
+          "docker build --tag kubyterlab:${VERSION} --file ./jupyterlab/Dockerfile .;",
         ],
+        "windows": {
+          "command": [
+            "docker build --tag kubyterlab:$($env:VERSION) --file ./jupyterlab/Dockerfile .;",
+          ]
+        },
         "group": "test",
         "presentation": {
           "reveal": "always",
           "panel": "new"
-        }
+        },
+        "options": {
+          "env": {
+            "REGION": "ca-central-1",
+            "VERSION": "24.10"
+          }
+        },
       },
       {
         "label": "push-to-aws",
+        "dependsOn": "build",
         "type": "shell",
         "command": [
           "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
@@ -26,12 +38,15 @@
           "command": [
             "$AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
             "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.$($env:REGION).amazonaws.com\\\";",
-            "aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin $HOSTNAME;",
+            "aws ecr get-login-password --region $($env:REGION) | docker login --username AWS --password-stdin $HOSTNAME;",
+            "docker tag kubyterlab:$($env:VERSION) $HOSTNAME/kubyterlab:$($env:VERSION);",
+            "docker push $HOSTNAME/kubyterlab:$($env:VERSION);",
           ]
         },
         "options": {
           "env": {
-            "REGION": "ca-central-1"
+            "REGION": "ca-central-1",
+            "VERSION": "24.10"
           }
         },
         "group": "test",

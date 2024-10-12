@@ -1,12 +1,12 @@
 services:
   notebooks:
-    image: jupyterlab
+    image: kubyterlab
     build:
       context: ./
-      dockerfile: jupyterlab/Dockerfile
+      dockerfile: kubyterlab/Dockerfile
     ports:
       - "127.0.0.1:8888:8888"
-    container_name: jupyterlab
+    container_name: kubyterlab
     networks:
       - eberron-llm
     environment:
