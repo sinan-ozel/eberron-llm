@@ -3,7 +3,7 @@ services:
     image: kubyterlab
     build:
       context: ./
-      dockerfile: kubyterlab/Dockerfile
+      dockerfile: jupyterlab/Dockerfile
     ports:
       - "127.0.0.1:8888:8888"
     container_name: kubyterlab
