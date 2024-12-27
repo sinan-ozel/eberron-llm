@@ -22,7 +22,7 @@
         "options": {
           "env": {
             "REGION": "ca-central-1",
-            "VERSION": "24.10"
+            "VERSION": "24.12"
           }
         },
       },
@@ -46,7 +46,7 @@
         "options": {
           "env": {
             "REGION": "ca-central-1",
-            "VERSION": "24.10"
+            "VERSION": "24.12"
           }
         },
         "group": "test",
@@ -54,6 +54,22 @@
           "reveal": "always",
           "panel": "new"
         }
-      }
-    ]
+      },
+      {
+        "label": "get-jupyterlab-key",
+        "type": "shell",
+        "command": "docker exec -it kubyterlab bash -c 'jupyter server list | grep token | sed -n \\\"s/.*token=//p\\\" | sed -n \\\"s/::.*//p\\\"'",
+        "group": {
+            "kind": "build",
+            "isDefault": true
+        },
+        "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": false,
+            "panel": "shared"
+        },
+        "problemMatcher": []
+    }
+]
   }
