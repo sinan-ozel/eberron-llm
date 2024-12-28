@@ -13,10 +13,11 @@ services:
       - JUPYTERLAB_SETTINGS_DIR=/jupyterlab/config
       - HF_HOME=/jupyterlab/hf
       - MISTRAL_MODEL=/jupyterlab/mistral_models
+      - TESSDATA_PREFIX=/usr/local/share/tessdata/
     volumes:
       - './jupyterlab/notebooks:/jupyterlab/notebooks'
       - 'D:/Home/Personal/RP/Resources/DND 3e/Eberron:/eberron/3e'
-      - 'D:/Home/Personal/RP/Resources/DND 5e/CampaignSetting/Eberron:/eberron/5e'
+      - 'D:/Home/Personal/RP/Resources/DND 5e/CampaignSettings/Eberron:/eberron/5e'
       - './jupyterlab/config:/jupyterlab/config'
       - 'F:/HuggingFaceCache:/jupyterlab/hf'
       - 'F:/MistralModels:/jupyterlab/mistral_models'

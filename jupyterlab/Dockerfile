@@ -36,10 +36,70 @@ RUN pip3 install nltk==3.9.1
 RUN pip3 install sentence_transformers==2.5.1
 
 RUN pip3 install pypdf==4.3.1
+RUN pip3 install openparse==0.7.0
+
+RUN pip3 install fastembed==0.3.3
+RUN pip3 install flashrank==0.2.8
+
+RUN pip3 install langchain-community==0.2.6
+RUN pip3 install langchain-experimental==0.0.62
+RUN pip3 install langchain-groq==0.1.6
+RUN pip3 install langchain-qdrant==0.1.1
+RUN pip3 install langchain==0.2.6
+RUN pip3 install langchain-mistralai==0.1.12
+
+RUN pip3 install lancedb==0.16.0
 
 RUN pip3 install git+https://github.com/huggingface/huggingface_hub
 
+ARG TESSERACT_VERSION="main"
+ARG TESSERACT_URL="https://api.github.com/repos/tesseract-ocr/tesseract/tarball/${TESSERACT_VERSION}"
 
-EXPOSE 8888
+RUN apt install -y wget
+RUN apt install -y ca-certificates
+RUN apt install -y apt-transport-https
+RUN apt install -y g++
+RUN apt install -y make
+RUN apt install -y libleptonica-dev
+RUN apt install -y libtool
+RUN apt install -y pkg-config
+
+WORKDIR /src
+RUN wget -qO tesseract.tar.gz $TESSERACT_URL
+RUN tar -xzf tesseract.tar.gz
+RUN mv tesseract-* tesseract
+
+WORKDIR /src/tesseract
+
+RUN ./autogen.sh
+RUN ./configure
+RUN make
+RUN make install
+RUN ldconfig
+
+RUN rm -rf /src
+
+WORKDIR /usr/local/share/tessdata/
+
+COPY jupyterlab/tesseract/get-languages.sh .
+COPY jupyterlab/tesseract/languages.txt .
+RUN chmod +x ./get-languages.sh
+RUN ./get-languages.sh
+RUN rm ./get-languages.sh
+RUN rm ./languages.txt
+
+RUN apt install unzip zip -y
+RUN apt install rsync -y
+
+RUN pip3 install mangoCR==0.1.4
+# TODO: Move tesseract above
+
+# Clean up apt
+RUN rm -rf /var/cache/apk/*
+RUN apt-get autoremove -y
+RUN apt-get clean
+
+
+EXPOSE 8888 22
 WORKDIR /jupyterlab
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--ServerApp.root_dir='/jupyterlab/notebooks'", "--allow-root"]
