@@ -1,0 +1,5 @@
+.aws/*
+images/*
+**/.ipynb_checkpoints
+jupyterlab/config
+jupyterlab/config/**
