@@ -29,24 +29,6 @@ services:
           - driver: nvidia
             capabilities: ["gpu"]
             count: all
-  aws-cli:
-    image: aws-cli
-    tty: true
-    build:
-      context: ./
-      dockerfile: aws-cli/Dockerfile
-    container_name: aws-cli
-    volumes:
-      - './.ecs:/root/.ecs'
-      - './.aws:/root/.aws'
-      - 'D:/AppData/EberronCorpus:/corpus'
-      - './aws-cli/kubernetes:/root/deployment/kubernetes'
-      - './images:/root/deployment/images'
-      - './jupyterlab:/root/jupyterlab'
-      - 'C:/Users/sinan/Config/vim:/root/.vim'
-    networks:
-      - eberron-llm
-    command: tail -F /dev/null
 networks:
   eberron-llm:
     driver: bridge
