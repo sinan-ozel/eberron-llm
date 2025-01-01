@@ -70,6 +70,31 @@
             "panel": "shared"
         },
         "problemMatcher": []
+    },
+    {
+      "label": "freeze",
+      "type": "shell",
+      "command": [
+        "docker exec -it kubyterlab bash -c 'mkdir -p /tmp; pip freeze > /tmp/freeze.txt';",
+        "docker cp kubyterlab:/tmp/freeze.txt ./jupyterlab/freeze/${KUBYTERLAB_VERSION}.txt"
+      ],
+      "windows": {
+        "command": [
+          "docker exec -it kubyterlab bash -c 'mkdir -p /tmp; pip freeze > /tmp/freeze.txt';",
+          "docker cp kubyterlab:/tmp/freeze.txt ./jupyterlab/freeze/$($env:KUBYTERLAB_VERSION).txt"
+        ]
+      },
+      "group": {
+          "kind": "build",
+          "isDefault": true
+      },
+      "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+      },
+      "problemMatcher": []
     }
-]
-  }
+  ]
+}
