@@ -2,28 +2,28 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "options": {
+      "env": {
+        "REGION": "ca-central-1",
+        "KUBYTERLAB_VERSION": "25.01-llm"
+      }
+    },
     "tasks": [
       {
         "label": "build",
         "type": "shell",
         "command": [
-          "docker build --tag kubyterlab:${VERSION} --file ./jupyterlab/Dockerfile .;",
+          "docker build --tag kubyterlab:${KUBYTERLAB_VERSION} --file ./jupyterlab/Dockerfile .;",
         ],
         "windows": {
           "command": [
-            "docker build --tag kubyterlab:$($env:VERSION) --file ./jupyterlab/Dockerfile .;",
+            "docker build --tag kubyterlab:$($env:KUBYTERLAB_VERSION) --file ./jupyterlab/Dockerfile .;",
           ]
         },
         "group": "test",
         "presentation": {
           "reveal": "always",
           "panel": "new"
-        },
-        "options": {
-          "env": {
-            "REGION": "ca-central-1",
-            "VERSION": "24.12"
-          }
         },
       },
       {
@@ -39,14 +39,14 @@
             "$AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
             "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.$($env:REGION).amazonaws.com\\\";",
             "aws ecr get-login-password --region $($env:REGION) | docker login --username AWS --password-stdin $HOSTNAME;",
-            "docker tag kubyterlab:$($env:VERSION) $HOSTNAME/kubyterlab:$($env:VERSION);",
-            "docker push $HOSTNAME/kubyterlab:$($env:VERSION);",
+            "docker tag kubyterlab:$($env:KUBYTERLAB_VERSION) $HOSTNAME/kubyterlab:$($env:KUBYTERLAB_VERSION);",
+            "docker push $HOSTNAME/kubyterlab:$($env:KUBYTERLAB_VERSION);",
           ]
         },
         "options": {
           "env": {
             "REGION": "ca-central-1",
-            "VERSION": "24.12"
+            "VERSION": "25.01"
           }
         },
         "group": "test",
