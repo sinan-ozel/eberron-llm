@@ -2,24 +2,13 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
-    "options": {
-      "env": {
-        "REGION": "ca-central-1",
-        "KUBYTERLAB_VERSION": "25.01-llm"
-      }
-    },
     "tasks": [
       {
         "label": "build",
         "type": "shell",
         "command": [
-          "docker build --tag kubyterlab:${KUBYTERLAB_VERSION} --file ./jupyterlab/Dockerfile .;",
+          "docker build --tag kubyterlab:${config:kubyterlab.version} --file ./jupyterlab/Dockerfile .;",
         ],
-        "windows": {
-          "command": [
-            "docker build --tag kubyterlab:$($env:KUBYTERLAB_VERSION) --file ./jupyterlab/Dockerfile .;",
-          ]
-        },
         "group": "test",
         "presentation": {
           "reveal": "always",
@@ -32,22 +21,16 @@
         "type": "shell",
         "command": [
           "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
-          "aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com",
+          "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com",
         ],
         "windows": {
           "command": [
             "$AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
-            "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.$($env:REGION).amazonaws.com\\\";",
-            "aws ecr get-login-password --region $($env:REGION) | docker login --username AWS --password-stdin $HOSTNAME;",
-            "docker tag kubyterlab:$($env:KUBYTERLAB_VERSION) $HOSTNAME/kubyterlab:$($env:KUBYTERLAB_VERSION);",
-            "docker push $HOSTNAME/kubyterlab:$($env:KUBYTERLAB_VERSION);",
+            "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
+            "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin $HOSTNAME;",
+            "docker tag kubyterlab:${config:kubyterlab.version} $HOSTNAME/kubyterlab:${config:kubyterlab.version};",
+            "docker push $HOSTNAME/kubyterlab:${config:kubyterlab.version};",
           ]
-        },
-        "options": {
-          "env": {
-            "REGION": "ca-central-1",
-            "VERSION": "25.01"
-          }
         },
         "group": "test",
         "presentation": {
@@ -76,14 +59,8 @@
       "type": "shell",
       "command": [
         "docker exec -it kubyterlab bash -c 'mkdir -p /tmp; pip freeze > /tmp/freeze.txt';",
-        "docker cp kubyterlab:/tmp/freeze.txt ./jupyterlab/freeze/${KUBYTERLAB_VERSION}.txt"
+        "docker cp kubyterlab:/tmp/freeze.txt ./jupyterlab/freeze/${config:kubyterlab.version}.txt"
       ],
-      "windows": {
-        "command": [
-          "docker exec -it kubyterlab bash -c 'mkdir -p /tmp; pip freeze > /tmp/freeze.txt';",
-          "docker cp kubyterlab:/tmp/freeze.txt ./jupyterlab/freeze/$($env:KUBYTERLAB_VERSION).txt"
-        ]
-      },
       "group": {
           "kind": "build",
           "isDefault": true
