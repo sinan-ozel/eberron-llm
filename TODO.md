@@ -1,4 +1,4 @@
-- [ ] Multiple agents for character creation (one fo spells, another for class abilities, etc...)
+- [ ] Multiple agents for character creation - one for background and motives, one for the mechanical sheet, and another call for tactics in battle.
 - [ ] Specific retieval for character creation rules
 - [ ] Campaign info vector storage
 - [ ] Classifier extended: short or long answer?
@@ -6,4 +6,5 @@
 - [ ] tag literature as either canon / kanon or homebrew
 - [ ] Text cleanup
 - [ ] Deduping
-
+- [ ] Add questions specific to Daelkyr to evaluate
+- [ ] Compare the evaluation to ChatGPT responses.
