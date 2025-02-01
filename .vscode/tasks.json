@@ -16,6 +16,28 @@
         },
       },
       {
+        "label": "docker-compose-up",
+        "dependsOn": "build",
+        "type": "shell",
+        "command": [
+          "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
+          "$REGION=${config:aws.region};",
+          "docker-compose up --build;",
+        ],
+        "windows": {
+          "command": [
+            "$env:AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
+            "$env:REGION=\\\"${config:aws.region}\\\";",
+            "docker-compose up --build;",
+          ]
+        },
+        "group": "run",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
         "label": "push-to-aws",
         "dependsOn": "build",
         "type": "shell",

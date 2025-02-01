@@ -1,9 +1,6 @@
 services:
   notebooks:
-    image: kubyterlab
-    build:
-      context: ./
-      dockerfile: jupyterlab/Dockerfile
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/kubyterlab-llm:25.01
     ports:
       - "127.0.0.1:8888:8888"
     container_name: kubyterlab
@@ -18,6 +15,8 @@ services:
       - './jupyterlab/notebooks:/jupyterlab/notebooks'
       - 'D:/Home/Personal/RP/Resources/DND 3e/Eberron:/eberron/3e'
       - 'D:/Home/Personal/RP/Resources/DND 5e/CampaignSettings/Eberron:/eberron/5e'
+      - 'D:/Home/Personal/RP/Resources/DND 5e/CoreRulebooks:/core/5e'
+      - 'D:/Home/Personal/RP/Resources/DND 5e/Homebrew:/homebrew/5e'
       - './jupyterlab/config:/jupyterlab/config'
       - 'F:/HuggingFaceCache:/jupyterlab/hf'
       - 'F:/MistralModels:/jupyterlab/mistral_models'
