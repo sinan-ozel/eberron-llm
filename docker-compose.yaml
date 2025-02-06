@@ -1,6 +1,6 @@
 services:
   notebooks:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/kubyterlab-llm:25.01
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/kubyterlab-llm:25.02
     ports:
       - "127.0.0.1:8888:8888"
     container_name: kubyterlab

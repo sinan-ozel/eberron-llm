@@ -3,6 +3,9 @@
         "region": "ca-central-1"
     },
     "kubyterlab":{
-        "version": "25.01-llm"
+        "version": "25.02"
+    },
+    "eberron-agent-server":{
+        "version": "25.02"
     }
 }
