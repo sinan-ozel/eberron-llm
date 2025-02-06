@@ -3,3 +3,5 @@ images/*
 **/.ipynb_checkpoints
 jupyterlab/config
 jupyterlab/config/**
+**/__pycache__
+util/*/hf*

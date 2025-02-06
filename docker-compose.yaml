@@ -11,6 +11,7 @@ services:
       - HF_HOME=/jupyterlab/hf
       - MISTRAL_MODEL=/jupyterlab/mistral_models
       - TESSDATA_PREFIX=/usr/local/share/tessdata/
+      - ARTEFACT_ROOT_FOLDER=/jupyterlab/notebooks/
     volumes:
       - './jupyterlab/notebooks:/jupyterlab/notebooks'
       - 'D:/Home/Personal/RP/Resources/DND 3e/Eberron:/eberron/3e'

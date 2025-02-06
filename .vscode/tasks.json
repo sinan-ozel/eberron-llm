@@ -4,10 +4,10 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "build",
+        "label": "build-eberron-agent-server",
         "type": "shell",
         "command": [
-          "docker build --tag kubyterlab:${config:kubyterlab.version} --file ./jupyterlab/Dockerfile .;",
+          "docker build --tag multi-agent/eberron-agent-server:${config:eberron-agent-server.version} --file ./multi-agent-servers/eberron-agent-server/Dockerfile ./multi-agent-servers/eberron-agent-server;",
         ],
         "group": "test",
         "presentation": {
@@ -16,7 +16,24 @@
         },
       },
       {
-        "label": "docker-compose-up",
+        "label": "test-eberron-agent-server",
+        "type": "shell",
+        "command": [
+          "cd ./multi-agent-servers/eberron-agent-server; docker-compose up --abort-on-container-exit --exit-code-from test",
+        ],
+        "windows": {
+          "command": [
+            "cd .\\multi-agent-servers\\eberron-agent-server; docker-compose up --abort-on-container-exit --exit-code-from test",
+          ]
+        },
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+      },
+      {
+        "label": "run-kubyterlab-locally",
         "dependsOn": "build",
         "type": "shell",
         "command": [
@@ -38,7 +55,7 @@
         }
       },
       {
-        "label": "push-to-aws",
+        "label": "push-eberron-agent-server-to-aws",
         "dependsOn": "build",
         "type": "shell",
         "command": [
@@ -50,8 +67,8 @@
             "$AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
             "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
             "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin $HOSTNAME;",
-            "docker tag kubyterlab:${config:kubyterlab.version} $HOSTNAME/kubyterlab:${config:kubyterlab.version};",
-            "docker push $HOSTNAME/kubyterlab:${config:kubyterlab.version};",
+            "docker tag multi-agent/eberron-agent-server:${config:eberron-agent-server.version} $HOSTNAME/multi-agent/eberron-agent-server:${config:eberron-agent-server.version};",
+            "docker push $HOSTNAME/multi-agent/eberron-agent-server:${config:eberron-agent-server.version};",
           ]
         },
         "group": "test",

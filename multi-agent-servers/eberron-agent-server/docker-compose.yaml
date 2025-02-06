@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
+    container_name: eberron_agent_server
+    ports:
+      - "8000:8000"
+    environment:
+      - ARTEFACT_VERSION=00
+      - ARTEFACT_ROOT_FOLDER=/artefact
+      - HF_HOME=/hf
+      - MODEL_NAME=MockLLM
+      - MODEL_ORG=test
+      - COMMIT_HASH=mockhash
+      # - TRANSFORMERS_OFFLINE=1
+      # - HF_DATASETS_OFFLINE=1
+    volumes:
+      - ./app:/app
+      - ./tests/artefact:/artefact
+      - ./tests/hf:/hf
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      retries: 3
+      start_period: 20s
+      timeout: 5s
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: ["gpu"]
+            count: all
+  test:
+    build:
+      context: ./tests
+      dockerfile: Dockerfile
+    privileged: true
+    container_name: eberron_agent_test
+    depends_on:
+      app:
+        condition: service_healthy
+
+
+

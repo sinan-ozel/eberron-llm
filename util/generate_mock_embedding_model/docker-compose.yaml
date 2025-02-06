@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  generate-mock-embedding-model:
+    build: .
+    volumes:
+      - ./hf:/hf
+    environment:
+      - HF_HOME=/hf
+    command: python generate_mock_embedding_model.py
+    restart: "no"

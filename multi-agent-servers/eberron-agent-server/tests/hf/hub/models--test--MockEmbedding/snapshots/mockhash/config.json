@@ -1,0 +1,7 @@
+{
+    "model_type": "gpt2",
+    "sentence_transformers_modules": [
+        "Transformer",
+        "Pooling"
+    ]
+}
