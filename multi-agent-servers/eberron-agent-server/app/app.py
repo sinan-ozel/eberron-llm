@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 
-from supervisor import Supervisor
+from supervisor import supervisor
 
 app = FastAPI()
 
