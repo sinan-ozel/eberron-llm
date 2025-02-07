@@ -1,4 +1,5 @@
 from typing import Iterable
+import re
 
 from agents_on_langchain.base_agent import BaseAgent
 from agents import (CanonicalSummaryAgent,
@@ -6,6 +7,13 @@ from agents import (CanonicalSummaryAgent,
                     CharacterPrompterAgent,
                     CharacterGeneratorAgent,
                     RequestClassifierAgent)
+
+
+canonical_summary_agent = CanonicalSummaryAgent("similarity", {'k': 5})
+improvisor_agent = ImprovisorAgent("similarity", {'k': 5})
+character_prompter_agent = CharacterPrompterAgent("similarity", {'k': 10})
+character_generator_agent = CharacterGeneratorAgent()
+request_classifier = RequestClassifierAgent()
 
 
 class SupervisorAgent(BaseAgent):

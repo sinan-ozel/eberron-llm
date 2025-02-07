@@ -1,4 +1,6 @@
 from typing import List, Tuple, Iterable
+from textwrap import dedent
+
 from transformers import pipeline
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain_core.vectorstores.base import VectorStore
@@ -25,7 +27,7 @@ class CanonicalSummaryAgent(BaseAgent):
         """This agent does not listen to any contextual information"""
         return False
 
-    def __init__(self, vector_store: VectorStore, search_type: str, search_kwargs: dict):
+    def __init__(self, search_type: str, search_kwargs: dict):
         self.retriever = vector_store.as_retriever(search_type=search_type, search_kwargs=search_kwargs)
 
     def _retrieve(self, q: str) -> List[Tuple[str, dict]]:
@@ -61,6 +63,9 @@ class CanonicalSummaryAgent(BaseAgent):
             self._last_response += chunk
             yield chunk
 
+    def run() -> None:
+        pass
+
 
 class ImprovisorAgent(BaseAgent):
     version = '01'
@@ -79,7 +84,7 @@ class ImprovisorAgent(BaseAgent):
         """This agent does not listen to any contextual information."""
         return False
 
-    def __init__(self, vector_store: VectorStore, search_type: str, search_kwargs: dict):
+    def __init__(self, search_type: str, search_kwargs: dict):
         self.retriever = vector_store.as_retriever(search_type=search_type, search_kwargs=search_kwargs)
 
     def _retrieve(self, q: str) -> List[Tuple[str, dict]]:
@@ -116,6 +121,9 @@ class ImprovisorAgent(BaseAgent):
             self._last_response += chunk
             yield chunk
 
+    def run() -> None:
+        pass
+
 
 class CharacterPrompterAgent(BaseAgent):
     version = '01'
@@ -134,7 +142,7 @@ class CharacterPrompterAgent(BaseAgent):
         """This agent does not listen to any contextual information"""
         return False
 
-    def __init__(self, vector_store: VectorStore, search_type: str, search_kwargs: dict):
+    def __init__(self, search_type: str, search_kwargs: dict):
         self.retriever = vector_store.as_retriever(search_type=search_type, search_kwargs=search_kwargs)
 
     def _retrieve(self, q: str) -> List[Tuple[str, dict]]:
@@ -171,6 +179,9 @@ class CharacterPrompterAgent(BaseAgent):
         for chunk in self.base_llm.bind(skip_prompt=True).stream(prompt):
             self._last_response += chunk
             yield chunk
+
+    def run() -> None:
+        pass
 
 
 class CharacterGeneratorAgent(BaseAgent):
@@ -241,6 +252,9 @@ class CharacterGeneratorAgent(BaseAgent):
             self._last_response += chunk
             yield chunk
 
+    def run() -> None:
+        pass
+
 
 class RequestClassifierAgent(BaseAgent):
     version = '01'
@@ -297,3 +311,6 @@ class RequestClassifierAgent(BaseAgent):
         category = self.base_llm.bind(skip_prompt=True).invoke(self._prompt(q))
 
         yield category.strip()
+
+    def run() -> None:
+        pass
