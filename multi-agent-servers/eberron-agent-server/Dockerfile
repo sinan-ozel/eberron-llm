@@ -45,7 +45,7 @@ RUN pip3 install agents-on-langchain==0.1.0.dev202502010517
 
 RUN pip3 install git+https://github.com/huggingface/huggingface_hub@3618a38f80ae3073b95ea0fba26f363d2ec4ece8
 
-EXPOSE 80
+EXPOSE 8000
 WORKDIR /app
 COPY app/*.py /app
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

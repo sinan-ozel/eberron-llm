@@ -60,7 +60,7 @@ RUN pip3 install torch==2.4.1
 RUN pip3 install tensorflow==2.17.0
 RUN pip3 install datasets==3.0.0
 
-RUN pip3 install git+https://github.com/huggingface/transformers
+RUN pip3 install git+https://github.com/huggingface/transformers@919220dab1e29f4d04eacd61a197a45a4fec2613
 RUN pip3 install diffusers==0.30.0
 # RUN pip3 install git+https://github.com/huggingface/diffusers
 RUN pip3 install accelerate==0.34.2
@@ -93,8 +93,6 @@ RUN pip3 install langchain==0.2.6
 RUN pip3 install langchain-mistralai==0.1.12
 
 RUN pip3 install lancedb==0.16.0
-
-RUN pip3 install git+https://github.com/huggingface/huggingface_hub
 
 RUN pip3 install mangoCR==0.1.4
 

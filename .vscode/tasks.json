@@ -19,11 +19,11 @@
         "label": "test-eberron-agent-server",
         "type": "shell",
         "command": [
-          "cd ./multi-agent-servers/eberron-agent-server; docker-compose up --abort-on-container-exit --exit-code-from test",
+          "cd ./multi-agent-servers/eberron-agent-server; docker-compose up --build --abort-on-container-exit --exit-code-from test",
         ],
         "windows": {
           "command": [
-            "cd .\\multi-agent-servers\\eberron-agent-server; docker-compose up --abort-on-container-exit --exit-code-from test",
+            "cd .\\multi-agent-servers\\eberron-agent-server; docker-compose up --build --abort-on-container-exit --exit-code-from test",
           ]
         },
         "group": "test",
