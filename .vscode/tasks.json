@@ -4,6 +4,58 @@
     "version": "2.0.0",
     "tasks": [
       {
+        "label": "build-eberron-agent-frontend",
+        "type": "shell",
+        "command": [
+          "docker build --tag multi-agent/eberron-agent-frontend:${config:eberron-agent-frontend.version} --file ./multi-agent-servers/eberron-agent-frontend/Dockerfile ./multi-agent-servers/eberron-agent-frontend;",
+        ],
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+      },
+      {
+        "label": "test-eberron-agent-frontend",
+        "type": "shell",
+        "command": [
+          "cd ./multi-agent-servers/eberron-agent-frontend; docker-compose up --build --abort-on-container-exit --exit-code-from test",
+        ],
+        "windows": {
+          "command": [
+            "cd .\\multi-agent-servers\\eberron-agent-frontend; docker-compose up --build --abort-on-container-exit --exit-code-from test",
+          ]
+        },
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        },
+      },
+      {
+        "label": "push-eberron-agent-frontend-to-aws",
+        "dependsOn": "build",
+        "type": "shell",
+        "command": [
+          "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
+          "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com",
+        ],
+        "windows": {
+          "command": [
+            "$AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
+            "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
+            "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin $HOSTNAME;",
+            "docker tag multi-agent/eberron-agent-frontend:${config:eberron-agent-server.version} $HOSTNAME/multi-agent/eberron-agent-frontend:${config:eberron-agent-frontend.version};",
+            "docker push $HOSTNAME/multi-agent/eberron-agent-frontend:${config:eberron-agent-frontend.version};",
+          ]
+        },
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
         "label": "build-eberron-agent-server",
         "type": "shell",
         "command": [
@@ -33,28 +85,6 @@
         },
       },
       {
-        "label": "run-kubyterlab-locally",
-        "dependsOn": "build",
-        "type": "shell",
-        "command": [
-          "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
-          "$REGION=${config:aws.region};",
-          "docker-compose up --build;",
-        ],
-        "windows": {
-          "command": [
-            "$env:AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
-            "$env:REGION=\\\"${config:aws.region}\\\";",
-            "docker-compose up --build;",
-          ]
-        },
-        "group": "run",
-        "presentation": {
-          "reveal": "always",
-          "panel": "new"
-        }
-      },
-      {
         "label": "push-eberron-agent-server-to-aws",
         "dependsOn": "build",
         "type": "shell",
@@ -72,6 +102,28 @@
           ]
         },
         "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "run-kubyterlab-locally",
+        "dependsOn": "build",
+        "type": "shell",
+        "command": [
+          "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
+          "$REGION=${config:aws.region};",
+          "docker-compose up --build;",
+        ],
+        "windows": {
+          "command": [
+            "$env:AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
+            "$env:REGION=\\\"${config:aws.region}\\\";",
+            "docker-compose up --build;",
+          ]
+        },
+        "group": "none",
         "presentation": {
           "reveal": "always",
           "panel": "new"

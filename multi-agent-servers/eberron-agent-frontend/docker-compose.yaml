@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
+    container_name: eberron_agent_frontend
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=production
+    command: /bin/sh -c "npm start"  # Install dependencies and then start the app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4200"]
+      interval: 10s
+      retries: 3
+      start_period: 20s
+      timeout: 5s
+  test:
+    build:
+      context: ./tests
+      dockerfile: Dockerfile
+    privileged: true
+    container_name: eberron_agent_frontend_test
+    depends_on:
+      frontend:
+        condition: service_healthy
+
+
+

@@ -28,7 +28,8 @@ class CanonicalSummaryAgent(BaseAgent):
         return False
 
     def __init__(self, search_type: str, search_kwargs: dict):
-        self.retriever = vector_store.as_retriever(search_type=search_type, search_kwargs=search_kwargs)
+        self.retriever = vector_store.as_retriever(search_type=search_type,
+                                                   search_kwargs=search_kwargs)
 
     def _retrieve(self, q: str) -> List[Tuple[str, dict]]:
         self._last_retrieved_docs = self.retriever.invoke(q)
@@ -85,7 +86,8 @@ class ImprovisorAgent(BaseAgent):
         return False
 
     def __init__(self, search_type: str, search_kwargs: dict):
-        self.retriever = vector_store.as_retriever(search_type=search_type, search_kwargs=search_kwargs)
+        self.retriever = vector_store.as_retriever(search_type=search_type,
+                                                   search_kwargs=search_kwargs)
 
     def _retrieve(self, q: str) -> List[Tuple[str, dict]]:
         self._last_retrieved_docs = self.retriever.invoke(q)

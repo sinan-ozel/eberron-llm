@@ -7,5 +7,8 @@
     },
     "eberron-agent-server":{
         "version": "25.02"
+    },
+    "eberron-agent-frontend":{
+        "version": "25.02"
     }
 }
