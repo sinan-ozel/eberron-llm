@@ -1,5 +1,13 @@
 FROM python:3.11-slim
 
+RUN apt update
+RUN apt install curl -y
+
+# Clean up apt
+RUN rm -rf /var/cache/apk/*
+RUN apt-get autoremove -y
+RUN apt-get clean
+
 WORKDIR /app
 
 RUN pip install streamlit==1.42.2

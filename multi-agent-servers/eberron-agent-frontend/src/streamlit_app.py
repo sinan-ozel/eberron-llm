@@ -1,8 +1,12 @@
+import os
 import requests
 import streamlit as st
 
+CHAT_HOST = os.environ.get('CHAT_HOST', 'fastapi')
+
 def responder(prompt):
     url = 'http://aa703202c6c1849ce9814d2c1fbe6a9c-697758537.ca-central-1.elb.amazonaws.com'
+    url = f'http://{CHAT_HOST}'
 
     response = requests.post(f"{url}/respond",
                          headers={"Content-Type": "application/json",
@@ -14,6 +18,7 @@ def responder(prompt):
         yield chunk.decode("utf-8")
 
 
+st.set_page_config(page_title='Eberron DM Assistant', layout='wide', initial_sidebar_state='auto')
 st.title("Eberron DM Assistant")
 
 # Initialize chat history
