@@ -22,6 +22,18 @@ services:
       - 'F:/HuggingFaceCache:/jupyterlab/hf'
       - 'F:/MistralModels:/jupyterlab/mistral_models'
       - 'D:/AppData/EberronCorpus:/corpus'
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama/ollama:/root/.ollama
+      - ./ollama/entrypoint.sh:/entrypoint.sh
+    restart: unless-stopped
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+    networks:
+      - eberron-llm
     deploy:
       resources:
         reservations:
@@ -29,6 +41,30 @@ services:
           - driver: nvidia
             capabilities: ["gpu"]
             count: all
+  embed:
+    image: ollama/ollama:latest
+    container_name: embed
+    ports:
+      - "11435:11434"
+    volumes:
+      - ./embed/ollama:/root/.ollama
+      - ./embed/entrypoint.sh:/entrypoint.sh
+    restart: unless-stopped
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+    networks:
+      - eberron-llm
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./open-webui:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    restart: unless-stopped
+    networks:
+      - eberron-llm
 networks:
   eberron-llm:
     driver: bridge

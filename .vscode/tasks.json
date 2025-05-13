@@ -4,6 +4,79 @@
     "version": "2.0.0",
     "tasks": [
       {
+        "label": "build-ollama-single-model-server",
+        "type": "shell",
+        "command": [
+          "docker build --no-cache --build-arg MODEL_NAME=${input:MODEL_NAME} --build-arg MODEL_TAG=${input:MODEL_TAG} --tag ollama-server:${input:MODEL_NAME}-${input:MODEL_TAG} --file ./ollama/Dockerfile ./ollama;",
+          "docker create --entrypoint \\\"\\\" \\\"ollama-server:${input:MODEL_NAME}-${input:MODEL_TAG}\\\" bash -c 'ls -al /root/.ollama/models/manifests/registry.ollama.ai/library/${input:MODEL_NAME}/${input:MODEL_TAG} && ls -al /root/.ollama/models/blobs/sha256-*'"
+        ],
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "push-ollama-single-model-server-to-aws",
+        "dependsOn": "build-ollama-single-model-server",
+        "type": "shell",
+        "command": [
+          "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
+          "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com;",
+          "aws ecr describe-repositories --repository-names model-servers/ollama-server-${input:MODEL_NAME} --region ${config:aws.region} || aws ecr create-repository --repository-name model-servers/ollama-server-${input:MODEL_NAME} --region ${config:aws.region};",
+          "docker tag model-servers/ollama-server-${input:MODEL_NAME}:${input:MODEL_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com/model-servers/ollama-server-${input:MODEL_NAME}:${input:MODEL_TAG};",
+          "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com/model-servers/ollama-server-${input:MODEL_NAME}:${input:MODEL_TAG};"
+        ],
+        "windows": {
+          "command": [
+            "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text);",
+            "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
+            "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin $HOSTNAME;",
+            "aws ecr create-repository --repository-name model-servers/ollama-server-${input:MODEL_NAME} --region ${config:aws.region};",
+            "docker tag model-servers/ollama-server-${input:MODEL_NAME}:${input:MODEL_TAG} $HOSTNAME/model-servers/ollama-server-${input:MODEL_NAME}:${input:MODEL_TAG};",
+            "docker push $HOSTNAME/model-servers/ollama-server-${input:MODEL_NAME}:${input:MODEL_TAG};"
+          ]
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "test-ollama-single-model-server-on-aws",
+        "dependsOn": "push-ollama-single-model-server-to-aws",
+        "type": "shell",
+        "command": [
+          "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
+          "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com;",
+          "$REGION=${config:aws.region};",
+          "cd ollama/test && docker-compose up --build;",
+        ],
+        "windows": {
+          "command": [
+            "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text);",
+            "$HOSTNAME=\\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
+            "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin ${HOSTNAME};",
+            "$env:REGION=\\\"${config:aws.region}\\\";",
+            "$env:AWS_ACCOUNT_ID=\\\"${AWS_ACCOUNT_ID}\\\";",
+            "cd ollama/test;",
+            "docker-compose up --build;",
+          ]
+        },
+        "options": {
+          "env": {
+            "MODEL_NAME": "${input:MODEL_NAME}",
+            "MODEL_TAG": "${input:MODEL_TAG}"
+          }
+        },
+        "group": "none",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
         "label": "build-eberron-agent-frontend",
         "type": "shell",
         "command": [
@@ -94,8 +167,8 @@
         ],
         "windows": {
           "command": [
-            "$AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
-            "$HOSTNAME = \\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
+            "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text); ",
+            "$HOSTNAME=\\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
             "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin $HOSTNAME;",
             "docker tag multi-agent/eberron-agent-server:${config:eberron-agent-server.version} $HOSTNAME/multi-agent/eberron-agent-server:${config:eberron-agent-server.version};",
             "docker push $HOSTNAME/multi-agent/eberron-agent-server:${config:eberron-agent-server.version};",
@@ -113,13 +186,17 @@
         "type": "shell",
         "command": [
           "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text);",
+          "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com;",
           "$REGION=${config:aws.region};",
           "docker-compose up --build;",
         ],
         "windows": {
           "command": [
-            "$env:AWS_ACCOUNT_ID = $(aws sts get-caller-identity --query Account --output text); ",
+            "$AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text);",
+            "$HOSTNAME=\\\"${AWS_ACCOUNT_ID}.dkr.ecr.${config:aws.region}.amazonaws.com\\\";",
+            "aws ecr get-login-password --region ${config:aws.region} | docker login --username AWS --password-stdin ${HOSTNAME};",
             "$env:REGION=\\\"${config:aws.region}\\\";",
+            "$env:AWS_ACCOUNT_ID=\\\"${AWS_ACCOUNT_ID}\\\";",
             "docker-compose up --build;",
           ]
         },
@@ -163,6 +240,20 @@
           "panel": "shared"
       },
       "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "MODEL_NAME",
+      "type": "promptString",
+      "description": "Enter the model name",
+      "default": "gemma2"
+    },
+    {
+      "id": "MODEL_TAG",
+      "type": "promptString",
+      "description": "Enter the model tag/version",
+      "default": "2b"
     }
   ]
 }
