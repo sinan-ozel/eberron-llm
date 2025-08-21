@@ -1,6 +1,6 @@
 # Eberron DM Helper Agent
 
-In January 2025, I created a Multi-Agent Platform for the aptly-named bootcamp (Build Multi-Agent Applications)[https://maven.com/aggregate-intellect/llm-systems].
+In January 2025, I created a Multi-Agent Platform for the aptly-named bootcamp [Build Multi-Agent Applications](https://maven.com/aggregate-intellect/llm-systems).
 
 This repo contains the prototype in the notebooks and server code.
 
